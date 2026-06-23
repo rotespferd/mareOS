@@ -1,0 +1,20 @@
+{
+    "// mareOS hardened editor defaults": "see https://crftd.tech/blog/2026-05-30-notes-on-safer-development/",
+
+    "// Disable all auto-updating — updates are an attack surface and must be deliberate": "",
+    "update.mode": "none",
+    "extensions.autoUpdate": false,
+    "extensions.autoCheckUpdates": false,
+
+    "// Do not auto-trust folders; require explicit opt-in before running workspace code": "",
+    "security.workspace.trust.enabled": true,
+    "security.workspace.trust.startupPrompt": "always",
+    "security.workspace.trust.untrustedFiles": "prompt",
+
+    "// Run project tooling in containers, not the host/sandbox": "",
+    "dev.containers.executeInWSL": false,
+    "task.allowAutomaticTasks": "off",
+
+    "// No telemetry": "",
+    "telemetry.telemetryLevel": "off"
+}

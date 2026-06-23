@@ -1,0 +1,14 @@
+# mareOS — tell the containers stack to look for cosign/sigstore signatures
+# attached to images in these registry scopes. Paired with the matching
+# sigstoreSigned entries that podman-verify.sh merges into policy.json.
+#
+# See https://crftd.tech/blog/2026-05-30-notes-on-safer-development/ ("validate
+# signatures with cosign when possible").
+
+docker:
+  # Universal Blue base images are cosign-signed.
+  ghcr.io/ublue-os:
+    use-sigstore-attachments: true
+  # Our own published mareOS image.
+  ghcr.io/mareos:
+    use-sigstore-attachments: true

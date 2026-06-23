@@ -1,0 +1,44 @@
+name: build-mareos
+on:
+  schedule:
+    - cron: "00 06 * * *" # daily, ~20 min after ublue base images rebuild
+  push:
+    paths-ignore:
+      - "**.md"
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build & sign mareOS
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write # for cosign keyless/OIDC
+    strategy:
+      fail-fast: false
+      matrix:
+        recipe:
+          - recipe.yml
+    steps:
+      # The build (Containerfile generation, build, push, cosign signing) is
+      # handled by the reusable BlueBuild action.
+      #
+      # SUPPLY-CHAIN NOTE (per crftd.tech "Notes on safer development"):
+      # third-party actions should be pinned by full commit SHA, not a tag.
+      # Renovate (see renovate.json5) is configured to pin this and every other
+      # action to a digest and to enforce a release-age cooldown before bumping.
+      # Until that first Renovate PR lands, this uses the published tag.
+      - name: Build Custom Image
+        uses: blue-build/github-action@v1.11 # renovate: pin to digest
+        with:
+          recipe: ${{ matrix.recipe }}
+          cosign_private_key: ${{ secrets.SIGNING_SECRET }}
+          registry_token: ${{ github.token }}
+          pr_event_number: ${{ github.event.number }}
+          maximize_build_space: true

@@ -1,0 +1,31 @@
+# mareOS curated workflows.  Run:  just --justfile /usr/share/mareos/justfile <task>
+# (or symlink ~/.justfile). These wrap the safe paths so nobody hand-rolls a
+# `curl | bash` shortcut.
+
+# List available tasks
+default:
+    @just --justfile /usr/share/mareos/justfile --list
+
+# Create all curated, digest-pinned dev containers
+dev-init:
+    distrobox assemble create --file /usr/share/mareos/distrobox.ini
+
+# Enter the Node dev container (npm/pnpm live here, not on the host)
+node:
+    distrobox enter dev-node
+
+# Enter the Python dev container (pip/uv live here, not on the host)
+python:
+    distrobox enter dev-python
+
+# Verify a container image's cosign signature before using it
+verify image:
+    cosign verify "{{image}}"
+
+# Show the current OS deployment and available rollback
+status:
+    rpm-ostree status
+
+# Update the OS (atomic; applies on next reboot)
+update:
+    rpm-ostree upgrade

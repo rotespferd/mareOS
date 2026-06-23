@@ -1,0 +1,33 @@
+{
+  // mareOS dependency policy — dogfoods the rules from
+  // https://crftd.tech/blog/2026-05-30-notes-on-safer-development/
+  // Updates are explicit, digest-pinned, and cooled down before adoption.
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: [
+    "config:recommended",
+    // Pin every GitHub Action to a full commit SHA (not a tag).
+    "helpers:pinGitHubActionDigests",
+  ],
+
+  // Cooldown: do not adopt a release until it has been public for a while.
+  // 7 days for immutable refs; bump to 14 for mutable registries if desired.
+  minimumReleaseAge: "7 days",
+
+  // Group OS/base updates so they review together.
+  packageRules: [
+    {
+      // Container base images (recipe.yml base-image, distrobox manifests):
+      // keep them pinned by digest.
+      matchDatasources: ["docker"],
+      pinDigests: true,
+    },
+    {
+      // The base image is the highest-trust tier — allow it through faster.
+      matchPackageNames: ["ghcr.io/ublue-os/base-main"],
+      minimumReleaseAge: "1 day",
+    },
+  ],
+
+  // Surface, don't auto-merge — every bump is a human-reviewed decision.
+  dependencyDashboard: true,
+}

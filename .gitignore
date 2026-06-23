@@ -1,0 +1,7 @@
+# cosign private key — NEVER commit this. Store as the SIGNING_SECRET repo secret.
+cosign.key
+*.key
+
+# Local build artifacts
+/output/
+*.iso

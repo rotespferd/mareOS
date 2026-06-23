@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
+#
+# mareOS — secure-by-default immutable developer workstation
+# Published to ghcr.io/<your-user>/mareos
+#
+# Concept: bake the developer-safety practices from
+# https://crftd.tech/blog/2026-05-30-notes-on-safer-development/ directly into a
+# BlueBuild (https://blue-build.org/) image, so a fresh install is a hardened dev
+# workstation by default.
+#
+# Trust stratification -> OS layers:
+#   - OS vendor (highest trust): this image, atomic + signed + rollbackable.
+#   - Dev tooling (medium trust): flatpaks + distrobox/devcontainers, NEVER on host.
+#   - Project deps (lowest trust): only inside containers; pinned + cooled down.
+
+name: mareos
+description: Secure-by-default immutable developer workstation (BlueBuild PoC)
+
+# Base on the Universal Blue GNOME base image.
+# SECURITY: for production, pin this by digest, e.g.
+#   base-image: ghcr.io/ublue-os/base-main@sha256:<digest>
+# and let Renovate bump the digest with a cooldown (see renovate.json5).
+# A floating tag is used here only to make the PoC easy to bootstrap.
+base-image: ghcr.io/ublue-os/base-main
+image-version: latest
+
+modules:
+  # ---------------------------------------------------------------------------
+  # 1. Drop our hardened configuration into the image root.
+  #    Copies files/system/* -> /
+  # ---------------------------------------------------------------------------
+  - type: files
+    files:
+      - source: system
+        destination: /
+
+  # ---------------------------------------------------------------------------
+  # 2. HOST packages: only what is needed to *run* containers and verify
+  #    signatures. Deliberately NO project toolchains (node/npm/pip/maven/go/
+  #    cargo/cypress/...). The host literally cannot run `npm`, which forces all
+  #    dev work into sandboxed containers (the article's core rule).
+  # ---------------------------------------------------------------------------
+  - type: dnf
+    install:
+      packages:
+        - distrobox        # pet containers for dev environments
+        - podman-compose   # compose stacks without docker
+        - cosign           # verify container/image signatures
+        - just             # task runner for the curated workflows below
+        - age              # modern file encryption for secrets
+        - sops             # encrypted secrets in git
+    remove:
+      packages:
+        # Prefer the sandboxed Flatpak browser over the layered RPM one.
+        - firefox
+        - firefox-langpacks
+
+  # ---------------------------------------------------------------------------
+  # 3. Sandboxed GUI apps from Flathub. The editor runs inside a Flatpak
+  #    sandbox; flatpak-harden.sh (below) tightens its filesystem permissions.
+  # ---------------------------------------------------------------------------
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: true
+        install:
+          - com.vscodium.codium             # editor, in a sandbox
+          - org.mozilla.firefox             # browser, in a sandbox
+          - com.github.tchx84.Flatseal      # inspect/manage sandbox permissions
+
+  # ---------------------------------------------------------------------------
+  # 4. Custom hardening steps run during the build.
+  # ---------------------------------------------------------------------------
+  - type: script
+    scripts:
+      - flatpak-harden.sh   # restrict the editor's sandbox after first install
+      - podman-verify.sh    # enable signature enforcement for container pulls
+
+  # ---------------------------------------------------------------------------
+  # 5. Enable the firewall by default (default-deny inbound via firewalld).
+  # ---------------------------------------------------------------------------
+  - type: systemd
+    system:
+      enabled:
+        - firewalld.service
+
+  # ---------------------------------------------------------------------------
+  # 6. Conservative kernel hardening. Validate each of these in a VM before
+  #    enabling more aggressive options (e.g. lockdown can interfere with some
+  #    GPU drivers / secure-boot flows).
+  # ---------------------------------------------------------------------------
+  - type: kargs
+    kargs:
+      - init_on_alloc=1        # zero heap allocations
+      - init_on_free=1         # zero freed memory
+      - page_alloc.shuffle=1   # randomize page allocator freelists
+      # - lockdown=integrity   # enable after VM validation
+      # - slab_nomerge         # enable after VM validation
+
+  # ---------------------------------------------------------------------------
+  # 7. Install the cosign policy & signing plumbing so signed rebases work.
+  #    Pairs with cosign.pub at the repo root and the build.yml signing step.
+  # ---------------------------------------------------------------------------
+  - type: signing
