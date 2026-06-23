@@ -43,12 +43,11 @@ modules:
   - type: dnf
     install:
       packages:
-        - distrobox        # pet containers for dev environments
-        - podman-compose   # compose stacks without docker
-        - cosign           # verify container/image signatures
-        - just             # task runner for the curated workflows below
-        - age              # modern file encryption for secrets
-        - sops             # encrypted secrets in git
+        - distrobox # pet containers for dev environments
+        - podman-compose # compose stacks without docker
+        - cosign # verify container/image signatures
+        - just # task runner for the curated workflows below
+        - age # modern file encryption for secrets
     remove:
       packages:
         # Prefer the sandboxed Flatpak browser over the layered RPM one.
@@ -64,17 +63,20 @@ modules:
       - scope: system
         notify: true
         install:
-          - com.vscodium.codium             # editor, in a sandbox
-          - org.mozilla.firefox             # browser, in a sandbox
-          - com.github.tchx84.Flatseal      # inspect/manage sandbox permissions
+          - com.vscodium.codium # editor, in a sandbox
+          - org.mozilla.firefox # browser, in a sandbox
+          - com.github.tchx84.Flatseal # inspect/manage sandbox permissions
+          - com.todoist.Todoist
+          - org.keepassxc.KeePassXC
+          - md.obsidian.Obsidian
 
   # ---------------------------------------------------------------------------
   # 4. Custom hardening steps run during the build.
   # ---------------------------------------------------------------------------
   - type: script
     scripts:
-      - flatpak-harden.sh   # restrict the editor's sandbox after first install
-      - podman-verify.sh    # enable signature enforcement for container pulls
+      - flatpak-harden.sh # restrict the editor's sandbox after first install
+      - podman-verify.sh # enable signature enforcement for container pulls
 
   # ---------------------------------------------------------------------------
   # 5. Enable the firewall by default (default-deny inbound via firewalld).
@@ -91,9 +93,9 @@ modules:
   # ---------------------------------------------------------------------------
   - type: kargs
     kargs:
-      - init_on_alloc=1        # zero heap allocations
-      - init_on_free=1         # zero freed memory
-      - page_alloc.shuffle=1   # randomize page allocator freelists
+      - init_on_alloc=1 # zero heap allocations
+      - init_on_free=1 # zero freed memory
+      - page_alloc.shuffle=1 # randomize page allocator freelists
       # - lockdown=integrity   # enable after VM validation
       # - slab_nomerge         # enable after VM validation
 
