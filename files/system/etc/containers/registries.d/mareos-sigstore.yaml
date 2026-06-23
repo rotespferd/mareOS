@@ -10,5 +10,5 @@ docker:
   ghcr.io/ublue-os:
     use-sigstore-attachments: true
   # Our own published mareOS image.
-  ghcr.io/mareos:
+  ghcr.io/rotespferd/mareos:
     use-sigstore-attachments: true

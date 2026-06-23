@@ -82,7 +82,7 @@ mareOS is itself built following the article:
 ## Verification (do this in a VM, never on your daily driver first)
 
 1. **Build:** push to GitHub (Actions builds & signs) or `bluebuild build recipes/recipe.yml`.
-2. **Signature:** `cosign verify --key cosign.pub ghcr.io/<you>/mareos`.
+2. **Signature:** `cosign verify --key cosign.pub ghcr.io/rotespferd/mareos`.
 3. **Rebase** a Fedora Atomic VM (unverified hop → signed ref; see README).
 4. **Assert controls hold:**
    - `which npm node pip mvn` → all absent on host.

@@ -46,7 +46,7 @@ cosign.pub              # signing public key (private key = SIGNING_SECRET secre
    cosign generate-key-pair
    # commit cosign.pub; add cosign.key contents as the SIGNING_SECRET repo secret
    ```
-3. Push. The `build-mareos` workflow builds and signs `ghcr.io/<you>/mareos`.
+3. Push. The `build-mareos` workflow builds and signs `ghcr.io/rotespferd/mareos`.
 
 Locally (rootful podman):
 ```sh
@@ -59,17 +59,17 @@ Boot a Fedora Atomic ISO in a VM, then:
 
 ```sh
 # 1. rebase (unverified, first hop)
-rpm-ostree rebase ostree-unverified-registry:ghcr.io/<you>/mareos:latest
+rpm-ostree rebase ostree-unverified-registry:ghcr.io/rotespferd/mareos:latest
 systemctl reboot
 
 # 2. move to the signature-verified ref
-rpm-ostree rebase ostree-image-signed:docker://ghcr.io/<you>/mareos:latest
+rpm-ostree rebase ostree-image-signed:docker://ghcr.io/rotespferd/mareos:latest
 systemctl reboot
 ```
 
 Verify the image signature beforehand:
 ```sh
-cosign verify --key cosign.pub ghcr.io/<you>/mareos
+cosign verify --key cosign.pub ghcr.io/rotespferd/mareos
 ```
 
 ## Daily workflow

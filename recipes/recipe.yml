@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 #
 # mareOS — secure-by-default immutable developer workstation
-# Published to ghcr.io/<your-user>/mareos
+# Published to ghcr.io/rotespferd/mareos
 #
 # Concept: bake the developer-safety practices from
 # https://crftd.tech/blog/2026-05-30-notes-on-safer-development/ directly into a
