@@ -1,15 +1,4 @@
 -----BEGIN PUBLIC KEY-----
-# PLACEHOLDER — replace with your real cosign public key.
-#
-# Generate a keypair (no fetch-and-execute; cosign ships on mareOS / via `dnf`):
-#     cosign generate-key-pair
-#
-# This produces:
-#   cosign.pub  -> commit it here (overwrite this file)
-#   cosign.key  -> DO NOT commit (it is .gitignored). Add its contents as the
-#                  GitHub Actions repository secret named SIGNING_SECRET.
-#
-# The BlueBuild `signing` module + build.yml use the private key to sign the
-# published image; this public key lets users verify it:
-#     cosign verify --key cosign.pub ghcr.io/<your-user>/mareos
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEX5M3utPCW+E02qs7Ri6p0L/1hvLk
+5LfLFj4pyEALQ024UXjKXfAqWoFHv6WyMCVuGzcmtRODcz4ZukgtS7UBzw==
 -----END PUBLIC KEY-----
