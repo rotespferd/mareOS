@@ -44,7 +44,7 @@ All file paths are in this repo; `files/system/*` is copied verbatim to `/` in t
   `node`/`npm`/`pip`/`mvn`/`go`/`cargo`. Running `npm` on the host is impossible → isolation
   by construction.
 - `default-flatpaks` installs VSCodium, Firefox, Flatseal from Flathub.
-- `scripts/flatpak-harden.sh` writes `/etc/flatpak/overrides/com.vscodium.codium` to strip
+- `files/scripts/flatpak-harden.sh` writes `/etc/flatpak/overrides/com.vscodium.codium` to strip
   the editor's broad home/host filesystem access (grant per-project folders explicitly).
 - `files/system/usr/share/mareos/distrobox.ini` — curated dev environments pinned by
   **digest**; `justfile` wraps the safe workflow so nobody hand-rolls a `curl | bash`.
@@ -58,7 +58,7 @@ All file paths are in this repo; `files/system/*` is copied verbatim to `/` in t
   fetch-and-execute, cooldowns, digest pins, "STOP — don't fall back to a weaker path").
 
 ### Cross-cutting hardening
-- `scripts/podman-verify.sh` merges a **sigstoreSigned** requirement into
+- `files/scripts/podman-verify.sh` merges a **sigstoreSigned** requirement into
   `/etc/containers/policy.json` for trusted scopes (e.g. `ghcr.io/ublue-os`), paired with
   `files/system/etc/containers/registries.d/mareos-sigstore.yaml`. Unsigned pulls in an
   enforced scope are refused.

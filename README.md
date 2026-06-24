@@ -32,7 +32,7 @@ machine by default instead of something each developer must harden by hand.
 ```
 recipes/recipe.yml      # the BlueBuild image definition
 files/system/           # hardened config copied verbatim into the image (-> /)
-scripts/                # build-time hardening (flatpak overrides, signature policy)
+files/scripts/          # build-time hardening run by the `script` module (flatpak, signatures)
 .github/workflows/      # build + sign pipeline (SHA-pinned, cosign)
 renovate.json5          # digest pinning + release-age cooldown
 cosign.pub              # signing public key (private key = SIGNING_SECRET secret)

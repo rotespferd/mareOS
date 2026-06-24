@@ -46,6 +46,7 @@ modules:
         - distrobox # pet containers for dev environments
         - podman-compose # compose stacks without docker
         - cosign # verify container/image signatures
+        - jq # used by podman-verify.sh to merge the signature policy
         - just # task runner for the curated workflows below
         - age # modern file encryption for secrets
     remove:
